@@ -26,38 +26,53 @@ def hash_password(password: str) -> str:
 
 
 def check_login():
-    """Renders login form and verifies credentials against st.secrets."""
-    if "authenticated" not in st.session_state:
-        st.session_state["authenticated"] = False
-        st.session_state["username"] = None
-        st.session_state["role"] = None
+  """Renders login form and verifies credentials against st.secrets."""
+  if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+    st.session_state["username"] = None
+    st.session_state["role"] = None
 
-    if st.session_state["authenticated"]:
-        return True
+  if st.session_state["authenticated"]:
+    return True
 
-    st.markdown("### 🔐 TNUWWB Portal Access")
-    with st.form("login_form"):
-        username = st.text_input("Username").strip()
-        password = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("Sign In", type="primary")
+  st.markdown("### 🔐 TNUWWB Portal Access")
+  with st.form("login_form"):
+    username_input = st.text_input("Username").strip()
+    password_input = st.text_input("Password", type="password").strip()
+    submitted = st.form_submit_button("Sign In", type="primary")
 
-        if submitted:
-            users = st.secrets.get("users", {})
-            if username in users:
-                user_info = users[username]
-                stored_hash = user_info.get("password_hash", "")
-                if hash_password(password) == stored_hash:
-                    st.session_state["authenticated"] = True
-                    st.session_state["username"] = username
-                    st.session_state["role"] = user_info.get("role", "customer")
-                    st.rerun()
-                else:
-                    st.error("Invalid username or password.")
-            else:
-                st.error("Invalid username or password.")
+    if submitted:
+      users = st.secrets.get("users", {})
 
-    return False
+      # Convert all stored usernames to lowercase for case-insensitive matching
+      users_normalized = {str(k).lower(): v for k, v in users.items()}
+      user_key = username_input.lower()
 
+      if user_key in users_normalized:
+        user_info = users_normalized[user_key]
+
+        # Check plaintext password first, then check hash
+        stored_plain = str(user_info.get("password", ""))
+        stored_hash = str(user_info.get("password_hash", ""))
+        entered_hash = hashlib.sha256(password_input.encode()).hexdigest()
+
+        is_valid = False
+        if stored_plain and password_input == stored_plain:
+          is_valid = True
+        elif stored_hash and entered_hash == stored_hash:
+          is_valid = True
+
+        if is_valid:
+          st.session_state["authenticated"] = True
+          st.session_state["username"] = username_input
+          st.session_state["role"] = user_info.get("role", "customer")
+          st.rerun()
+        else:
+          st.error("Invalid username or password.")
+      else:
+        st.error("Invalid username or password.")
+
+  return False
 
 if not check_login():
     st.stop()
