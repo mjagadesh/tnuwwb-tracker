@@ -13,6 +13,30 @@ st.set_page_config(
     layout="wide",
 )
 
+# --- Hide Streamlit Header, GitHub / Fork buttons, and Footer ---
+hide_streamlit_style = """
+    <style>
+    /* Hide the entire top header containing Fork, GitHub, and Share */
+    header {visibility: hidden; display: none !important;}
+    
+    /* Hide top-right action elements and Streamlit toolbar */
+    [data-testid="stHeaderActionElements"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    .stDeployButton {display: none !important;}
+    
+    /* Hide standard hamburger menu and footer */
+    #MainMenu {visibility: hidden; display: none !important;}
+    footer {visibility: hidden; display: none !important;}
+    
+    /* Remove padding left by the hidden header */
+    .block-container {
+        padding-top: 2rem !important;
+    }
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
 TARGET_URL = "https://tnuwwb.tn.gov.in/applications/status"
 DEFAULT_CAPTCHA = "Z5s23"
 HEADERS = {
