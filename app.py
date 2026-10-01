@@ -319,7 +319,7 @@ with tab_batch:
 
             only_unapproved = st.checkbox("Check ONLY unapproved / pending records", value=True)
 
-            if st.button("🚀 Start Verification & Cloud Sync", type="primary"):
+            if st.button("🚀 Start Verification", type="primary"):
                 targets = [r for r in processable_records if not r["Is Already Approved"]] if only_unapproved else processable_records
 
                 if not targets:
@@ -361,11 +361,11 @@ with tab_batch:
 
                         time.sleep(request_delay)
 
-                    status_banner.text("Verification complete! Syncing to central database...")
+                    status_banner.text("Verification complete ...")
                     sync_res = sync_records_to_cloud(cloud_payload, st.session_state["username"])
 
                     if sync_res.get("success"):
-                        st.success(f"☁️ Successfully upserted {len(cloud_payload)} unique records to the central database.")
+                        st.success(f"☁️ Successfully done the operation.")
                     else:
                         st.warning(f"Status checked, but cloud sync warning: {sync_res.get('message')}")
 
