@@ -13,29 +13,32 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- Hide Streamlit Header, GitHub / Fork buttons, and Footer ---
+# --- Hide Streamlit Header, GitHub/Fork, and Bottom Hosting Badges ---
 hide_streamlit_style = """
     <style>
-    /* Hide the entire top header containing Fork, GitHub, and Share */
+    /* 1. Hide the entire top header (Fork, GitHub, Share) */
     header {visibility: hidden; display: none !important;}
-    
-    /* Hide top-right action elements and Streamlit toolbar */
     [data-testid="stHeaderActionElements"] {display: none !important;}
     [data-testid="stToolbar"] {display: none !important;}
     .stDeployButton {display: none !important;}
-    
-    /* Hide standard hamburger menu and footer */
     #MainMenu {visibility: hidden; display: none !important;}
-    footer {visibility: hidden; display: none !important;}
     
-    /* Remove padding left by the hidden header */
+    /* 2. Hide bottom footer and 'Hosted with Streamlit' viewer badge */
+    footer {visibility: hidden; display: none !important;}
+    [class*="viewerBadge"] {display: none !important;}
+    [class*="ViewerBadge"] {display: none !important;}
+    [class*="profile-badge"] {display: none !important;}
+    [class*="manageApp"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+
+    /* 3. Remove excess padding left behind by hidden header */
     .block-container {
         padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
     }
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
 
 TARGET_URL = "https://tnuwwb.tn.gov.in/applications/status"
 DEFAULT_CAPTCHA = "Z5s23"
